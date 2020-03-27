@@ -1,4 +1,5 @@
 from enum import Enum, unique
+from TokenType import TokenType
 
 
 class SimpleLexer:
@@ -7,20 +8,21 @@ class SimpleLexer:
     token_text = None
 
     def __init__(self):
-        script = 'int age=111;'
-        token_reader = self.tokenize(script)
-        print('\nparse: ' + script)
-        self.dump(token_reader)
-
-        script = 'age>=111;'
-        token_reader = self.tokenize(script)
-        print('\nparse: ' + script)
-        self.dump(token_reader)
-
-        script = 'age>111;'
-        token_reader = self.tokenize(script)
-        print('\nparse: ' + script)
-        self.dump(token_reader)
+        # script = 'int age=111;'
+        # token_reader = self.tokenize(script)
+        # print('\nparse: ' + script)
+        # self.dump(token_reader)
+        #
+        # script = 'age>=111;'
+        # token_reader = self.tokenize(script)
+        # print('\nparse: ' + script)
+        # self.dump(token_reader)
+        #
+        # script = 'age>111;'
+        # token_reader = self.tokenize(script)
+        # print('\nparse: ' + script)
+        # self.dump(token_reader)
+        pass
 
     @staticmethod
     def is_alpha(ch):
@@ -56,6 +58,30 @@ class SimpleLexer:
             self.token_text = ch
             self.token.type = TokenType.IntLiteral.value
             new_state = DfaState.IntLiteral.value
+        elif ch == '+':
+            self.token_text = ch
+            self.token.type = TokenType.Plus.value
+            new_state = DfaState.Plus.value
+        elif ch == '-':
+            self.token_text = ch
+            self.token.type = TokenType.Minus.value
+            new_state = DfaState.Minus.value
+        elif ch == '*':
+            self.token_text = ch
+            self.token.type = TokenType.Star.value
+            new_state = DfaState.Star.value
+        elif ch == '/':
+            self.token_text = ch
+            self.token.type = TokenType.Slash.value
+            new_state = DfaState.Slash.value
+        elif ch == '(':
+            self.token_text = ch
+            self.token.type = TokenType.LeftParen.value
+            new_state = DfaState.LeftParen.value
+        elif ch == ')':
+            self.token_text = ch
+            self.token.type = TokenType.RightParen.value
+            new_state = DfaState.RightParen.value
         elif ch == '>':
             self.token_text = ch
             self.token.type = TokenType.GT.value
@@ -94,6 +120,12 @@ class SimpleLexer:
                         state = self.init_token(ch)
                 elif state == DfaState.SemiColon.value \
                         or state == DfaState.GE.value \
+                        or state == DfaState.Plus.value \
+                        or state == DfaState.Minus.value \
+                        or state == DfaState.Star.value \
+                        or state == DfaState.Slash.value \
+                        or state == DfaState.LeftParen.value \
+                        or state == DfaState.RightParen.value \
                         or state == DfaState.Assignment.value:
                     state = self.init_token(ch)
                 elif state == DfaState.GT.value:
@@ -168,6 +200,13 @@ class SimpleLexer:
         def get_pos(self):
             return self.pos
 
+        def set_pos(self, pos):
+            self.pos = pos
+
+        def unread(self):
+            if self.pos > 0:
+                self.pos -= 1
+
 
 @unique
 class DfaState(Enum):
@@ -183,18 +222,22 @@ class DfaState(Enum):
     GE = 'GE'
     Plus = 'Plus'
     Minus = 'Minus'
+    Star = 'Star'
+    Slash = 'Slash'
     SemiColon = 'SemiColon'
+    LeftParen = 'LeftParen'
+    RightParen = 'RightParen'
 
 
-@unique
-class TokenType(Enum):
-    Int = 'Int'  # Int关键字
-    Identifier = 'Identifier'  # 标识符
-    IntLiteral = 'IntLiteral'  # 数字字面量
-    Assignment = 'Assignment'  # =
-    SemiColon = 'SemiColon'  # ;
-    GT = 'GT'
-    GE = 'GE'
+# @unique
+# class TokenType(Enum):
+#     Int = 'Int'  # Int关键字
+#     Identifier = 'Identifier'  # 标识符
+#     IntLiteral = 'IntLiteral'  # 数字字面量
+#     Assignment = 'Assignment'  # =
+#     SemiColon = 'SemiColon'  # ;
+#     GT = 'GT'
+#     GE = 'GE'
 
 
 SimpleLexer()
